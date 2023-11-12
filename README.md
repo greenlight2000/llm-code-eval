@@ -35,6 +35,9 @@ TODO: 补全
 * add_diff_tag()
 * add_review_comment()
 * add_hidden_unit_tests()
+* add_summarization()
+* add_time_optimization()
+* add_mem_optimization()
 * ......
 
 TODO: 补全
@@ -95,6 +98,10 @@ Replace "google_api_key" with your own Google API key.
    smell: `python evaluators/eval_palm.py --api_key google_api_key --data_load_name code_smell_data.jsonl --result_save_name code_smell_eval_palm.jsonl --log_file_name code_smell_eval_palm.log`
 3. For code
    test: `python evaluators/eval_palm.py --api_key google_api_key --data_load_name code_test_data.jsonl --result_save_name code_test_data_palm.jsonl --log_file_name code_test_data_palm.log`
+4. For code
+   summarization: `python evaluators/eval_palm.py --api_key google_api_key --data_load_name code_summarization_data.jsonl --result_save_name code_summarization_eval_palm.jsonl --log_file_name code_summarization_eval_palm.log`
+5. For code
+   optimization: `python evaluators/eval_palm.py --api_key google_api_key --data_load_name code_optimization_data.jsonl --result_save_name code_optimization_eval_palm.jsonl --log_file_name code_optimization_eval_palm.log`
 
 #### 3. GPT-3.5
 
@@ -106,6 +113,10 @@ Replace "openai_api_key" with your own OpenAI API key.
    smell: `python evaluators/eval_gpt.py --api_key openai_api_key --model gpt-3.5-turbo-0613 --data_load_name code_smell_data.jsonl --result_save_name code_smell_eval_gpt3.jsonl --log_file_name code_smell_eval_gpt3.log`
 3. For code
    test: `python evaluators/eval_gpt.py --api_key openai_api_key --model gpt-3.5-turbo-0613 --data_load_name code_test_data.jsonl --result_save_name code_test_data_gpt3.jsonl --log_file_name code_test_data_gpt3.log`
+4. For code
+   summarization: `python evaluators/eval_gpt.py --api_key openai_api_key --model gpt-3.5-turbo-0613 --data_load_name code_summarization_data.jsonl --result_save_name code_summarization_eval_gpt3.jsonl --log_file_name code_summarization_eval_gpt3.log`
+5. For code
+   optimization: `python evaluators/eval_gpt.py --api_key openai_api_key --model gpt-3.5-turbo-0613 --data_load_name code_optimization_data.jsonl --result_save_name code_optimization_eval_gpt3.jsonl --log_file_name code_optimization_eval_gpt3.log`
 
 #### 4. GPT-4
 
@@ -117,6 +128,10 @@ Replace "openai_api_key" with your own OpenAI API key.
    smell: `python evaluators/eval_gpt.py --api_key openai_api_key --model gpt-4-0613 --data_load_name code_smell_data.jsonl --result_save_name code_smell_eval_gpt4.jsonl --log_file_name code_smell_eval_gpt4.log`
 3. For code
    test: `python evaluators/eval_gpt.py --api_key openai_api_key --model gpt-4-0613 --data_load_name code_test_data.jsonl --result_save_name code_test_data_gpt4.jsonl --log_file_name code_test_data_gpt4.log`
+4. For code
+   summarization: `python evaluators/eval_gpt.py --api_key openai_api_key --model gpt-4-0613 --data_load_name code_summarization_data.jsonl --result_save_name code_summarization_eval_gpt4.jsonl --log_file_name code_summarization_eval_gpt4.log`
+5. For code
+   optimization: `python evaluators/eval_gpt.py --api_key openai_api_key --model gpt-4-0613 --data_load_name code_optimization_data.jsonl --result_save_name code_optimization_eval_gpt4.jsonl --log_file_name code_optimization_eval_gpt4.log`
 
 #### 5. CodeLLaMA
 
@@ -130,6 +145,10 @@ Replace "cache_dir" with path to a directory in which a downloaded pretrained mo
    smell: `python evaluators/eval_codellama.py --access_token access_token --cache_dir cache_dir --checkpoint codellama/CodeLlama-34b-Instruct-hf --data_load_name code_smell_data.jsonl --result_save_name code_smell_eval_codellama.jsonl --log_file_name code_smell_eval_codellama.log`
 3. For code
    test: `python evaluators/eval_codellama.py --access_token access_token --cache_dir cache_dir --checkpoint codellama/CodeLlama-34b-Instruct-hf --data_load_name code_test_data.jsonl --result_save_name code_test_data_codellama.jsonl --log_file_name code_test_data_codellama.log`
+4. For code
+   summarization: `python evaluators/eval_codellama.py --access_token access_token --cache_dir cache_dir --checkpoint codellama/CodeLlama-34b-Instruct-hf --data_load_name code_summarization_data.jsonl --result_save_name code_summarization_eval_codellama.jsonl --log_file_name code_summarization_eval_codellama.log`
+5. For code
+   optimization: `python evaluators/eval_codellama.py --access_token access_token --cache_dir cache_dir --checkpoint codellama/CodeLlama-34b-Instruct-hf --data_load_name code_optimization_data.jsonl --result_save_name code_optimization_eval_codellama.jsonl --log_file_name code_optimization_eval_codellama.log`
 
 #### 6. Vicuna
 
@@ -143,6 +162,10 @@ Replace "cache_dir" with path to a directory in which a downloaded pretrained mo
    smell: `python evaluators/eval_vicuna.py --access_token access_token --cache_dir cache_dir --checkpoint lmsys/vicuna-13b-v1.5-16k --data_load_name code_smell_data.jsonl --result_save_name code_smell_eval_vicuna.jsonl --log_file_name code_smell_eval_vicuna.log`
 3. For code
    test: `python evaluators/eval_vicuna.py --access_token access_token --cache_dir cache_dir --checkpoint lmsys/vicuna-13b-v1.5-16k --data_load_name code_test_data.jsonl --result_save_name code_test_data_vicuna.jsonl --log_file_name code_test_data_vicuna.log`
+4. For code
+   summarization: `python evaluators/eval_vicuna.py --access_token access_token --cache_dir cache_dir --checkpoint lmsys/vicuna-13b-v1.5-16k --data_load_name code_summarization_data.jsonl --result_save_name code_summarization_eval_vicuna.jsonl --log_file_name code_summarization_eval_vicuna.log`
+5. For code
+   optimization: `python evaluators/eval_vicuna.py --access_token access_token --cache_dir cache_dir --checkpoint lmsys/vicuna-13b-v1.5-16k --data_load_name code_optimization_data.jsonl --result_save_name code_optimization_eval_vicuna.jsonl --log_file_name code_optimization_eval_vicuna.log`
 
 #### 7. LLaMA2
 
@@ -156,6 +179,10 @@ Replace "cache_dir" with path to a directory in which a downloaded pretrained mo
    smell: `python evaluators/eval_llama2.py --access_token access_token --cache_dir cache_dir --checkpoint meta-llama/Llama-2-70b-chat-hf --data_load_name code_smell_data.jsonl --result_save_name code_smell_eval_llama2.jsonl --log_file_name code_smell_eval_llama2.log`
 3. For code
    test: `python evaluators/eval_llama2.py --access_token access_token --cache_dir cache_dir --checkpoint meta-llama/Llama-2-70b-chat-hf --data_load_name code_test_data.jsonl --result_save_name code_test_data_llama2.jsonl --log_file_name code_test_data_llama2.log`
+4. For code
+   summarization: `python evaluators/eval_llama2.py --access_token access_token --cache_dir cache_dir --checkpoint meta-llama/Llama-2-70b-chat-hf --data_load_name code_summarization_data.jsonl --result_save_name code_summarization_eval_llama2.jsonl --log_file_name code_summarization_eval_llama2.log`
+5. For code
+   optimization: `python evaluators/eval_llama2.py --access_token access_token --cache_dir cache_dir --checkpoint meta-llama/Llama-2-70b-chat-hf --data_load_name code_optimization_data.jsonl --result_save_name code_optimization_eval_llama2.jsonl --log_file_name code_optimization_eval_llama2.log`
 
 #### 8. WizardCoder
 
@@ -169,6 +196,10 @@ Replace "cache_dir" with path to a directory in which a downloaded pretrained mo
    smell: `python evaluators/eval_wizardcoder.py --access_token access_token --cache_dir cache_dir --checkpoint WizardLM/WizardCoder-15B-V1.0 --data_load_name code_smell_data.jsonl --result_save_name code_smell_eval_wizardcoder.jsonl --log_file_name code_smell_eval_wizardcoder.log`
 3. For code
    test: `python evaluators/eval_wizardcoder.py --access_token access_token --cache_dir cache_dir --checkpoint WizardLM/WizardCoder-15B-V1.0--data_load_name code_test_data.jsonl --result_save_name code_test_data_wizardcoder.jsonl --log_file_name code_test_data_wizardcoder.log`
+4. For code 
+   summarization: `python evaluators/eval_wizardcoder.py --access_token access_token --cache_dir cache_dir --checkpoint WizardLM/WizardCoder-15B-V1.0 --data_load_name code_summarization_data.jsonl --result_save_name code_summarization_eval_wizardcoder.jsonl --log_file_name code_summarization_eval_wizardcoder.log`
+5. For code
+   optimization: `python evaluators/eval_wizardcoder.py --access_token access_token --cache_dir cache_dir --checkpoint WizardLM/WizardCoder-15B-V1.0 --data_load_name code_optimization_data.jsonl --result_save_name code_optimization_eval_wizardcoder.jsonl --log_file_name code_optimization_eval_wizardcoder.log`
 
 #### 9. StarCoder
 
@@ -182,3 +213,7 @@ Replace "cache_dir" with path to a directory in which a downloaded pretrained mo
    smell: `python evaluators/eval_starcoder.py --access_token access_token --cache_dir cache_dir --checkpoint HuggingFaceH4/starchat-beta --data_load_name code_smell_data.jsonl --result_save_name code_smell_eval_starcoder.jsonl --log_file_name code_smell_eval_starcoder.log`
 3. For code
    test: `python evaluators/eval_starcoder.py --access_token access_token --cache_dir cache_dir --checkpoint HuggingFaceH4/starchat-beta --data_load_name code_test_data.jsonl --result_save_name code_test_data_starcoder.jsonl --log_file_name code_test_data_starcoder.log`
+4. For code
+   summarization: `python evaluators/eval_starcoder.py --access_token access_token --cache_dir cache_dir --checkpoint HuggingFaceH4/starchat-beta --data_load_name code_summarization_data.jsonl --result_save_name code_summarization_eval_starcoder.jsonl --log_file_name code_summarization_eval_starcoder.log`
+5. For code
+   optimization: `python evaluators/eval_starcoder.py --access_token access_token --cache_dir cache_dir --checkpoint HuggingFaceH4/starchat-beta --data_load_name code_optimization_data.jsonl --result_save_name code_optimization_eval_starcoder.jsonl --log_file_name code_optimization_eval_starcoder.log`
