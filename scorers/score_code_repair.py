@@ -43,7 +43,7 @@ def valid_execfiles(exec_outcome_dir):
 def main():
     processed_outcome = valid_execfiles(args.load_path)
     # Save processed outcome result
-    processed_outcome.to_json(args.output_path,lines=True)
+    processed_outcome.to_json(args.output_path, orient='records', lines=True)
 
 
 if __name__ == '__main__':
