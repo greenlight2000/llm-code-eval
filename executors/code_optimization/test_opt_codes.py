@@ -230,26 +230,3 @@ if __name__ == '__main__':
     retest = args.retest
     timeout_code_uids = []
     main()
-    # python test_opt_codes.py --code_opt_data_name mem_code_opt_data_palm.jsonl --codes_dir_name palm_opt_codes --opt_type mem
-    # python test_opt_codes.py --code_opt_data_name time_code_opt_inference_vicuna.jsonl --codes_dir_name vicuna_opt_parse --opt_type time
-
-    # python test_opt_codes.py --code_opt_data_name mem_code_opt_inference_wizardcoder.jsonl --codes_dir_name wizardcoder_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_opt_data_name time_code_opt_inference_wizardcoder.jsonl --codes_dir_name wizardcoder_opt_parse --opt_type time
-
-    # python test_opt_codes.py --code_opt_data_name mem_code_opt_data_codellama.jsonl --codes_dir_name codellama_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_opt_data_name time_code_opt_data_codellama.jsonl --codes_dir_name codellama_opt_parse --opt_type time
-    
-    # python test_opt_codes.py --code_opt_data_name mem_code_opt_data_gpt4.jsonl --codes_dir_name gpt4_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_opt_data_name time_code_opt_data_gpt4.jsonl --codes_dir_name gpt4_opt_parse --opt_type time
-
-    # python test_opt_codes.py --code_opt_data_name mem_code_opt_data_gpt3.jsonl --codes_dir_name gpt3_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_opt_data_name time_code_opt_data_gpt3.jsonl --codes_dir_name gpt3_opt_parse --opt_type time
-
-    # python test_opt_codes.py --code_opt_data_name mem_code_opt_data_llama2.jsonl --codes_dir_name llama2_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_opt_data_name time_code_opt_data_llama2.jsonl --codes_dir_name llama2_opt_parse --opt_type time
-
-    # python test_opt_codes.py --code_opt_data_name mem_code_opt_data_palm.jsonl --codes_dir_name palm_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_opt_data_name time_code_opt_data_palm.jsonl --codes_dir_name palm_opt_parse --opt_type time
-
-    # python test_opt_codes.py --code_opt_data_name mem_code_opt_data_starcoder.jsonl --codes_dir_name starcoder_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_opt_data_name time_code_opt_data_starcoder.jsonl --codes_dir_name starcoder_opt_parse --opt_type time
