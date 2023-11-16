@@ -86,8 +86,24 @@ TODO: 补全
 #### 1. Installation
 
 1. `cd llm-code-eval`
-2. `pip install -r requirements.txt`
-
+2. install python>=3.9 (we only guarantee the code works on python 3.9)
+3. install torch based on your cuda version
+4. `pip install -r requirements.txt`
+5. optional: install GNU C, GNU C++, Mono C#, Java 8 if you want to run code_test and code_optimization
+   
+TODO：建议把‘项目使用’下面的目录结构改为 安装，推理evaluator，打分scorer
+#### 2. Inference
+#### 3. Scoring
+##### Code Optimization
+Pipeline of evaluating LLM's performance of code optimization:
+0. Install Python 3, GNU C, GNU C++, Mono C# environment on your device.
+1. Run the inference scripts in the `evaluators` folder to get the inference results of the targeted model. The inference results ({time/mem}_code_opt_data_{modelname}.jsonl) will be saved in the `results/raw` folder.
+2. Run `python save_opt_codes.py --code_test_data_name mem_code_opt_eval_{modelname}.jsonl --codes_dir_name {modelname}_opt_codes --opt_type mem --parse_code` and `python save_opt_codes.py --code_test_data_name time_code_opt_eval_{modelname}.jsonl --codes_dir_name {modelname}_opt_codes --opt_type time --parse_code` to save the parsed optimized codes in the `results/ans/{modelname}_opt_codes` folder.
+3. Run `python test_opt_codes.py --code_test_data_name mem_code_opt_eval_{modelname}.jsonl --codes_dir_name {modelname}_opt_codes --opt_type mem` and `python test_opt_codes.py --code_test_data_name time_code_opt_eval_{modelname}.jsonl --codes_dir_name {modelname}_opt_codes --opt_type time` to execute the parsed optimized codes and get the execution time and memory usage. The performance metrics of each code snippet will be saved back to the parent folder of the code file under `results/ans/{modelname}_opt_codes`.
+4. Go to `scores` folder and run `python score_code_optimization.py --codes_dir_name opt_{modelname}_codes > opt_scores/cal_{modelname}_metrics.log`. This will calculate the pass@5 and opt@5 scores of the targeted model. And these results will be placed at  `scorers/opt_scores/`.
+##### Code Summarization
+Go to the `scorer` folder and run `python score_code_summarization.py` to get the scores of the model inference results, the results will be palced at `scorers/summ_scores/`.
+------- wyk分割线 -------
 #### 2. PaLM
 
 Replace "google_api_key" with your own Google API key.

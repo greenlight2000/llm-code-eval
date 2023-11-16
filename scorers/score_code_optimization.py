@@ -7,26 +7,25 @@ import numpy as np
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--codes_dir_name', default='palm_opt_parse', type=str, choices=['vicuna_opt_codes', 'wizardcoder_opt_codes', 'codellama_opt_codes', 'gpt4_opt_codes', 'gpt3_opt_codes', 'starcoder_opt_codes', 'llama2_opt_codes', 'palm_opt_codes']) # same as --codes_dir_name in test_opt_codes. the codes performance will be gathered directly from './codes/{args.codes_dir_name}/{lang_cluster}/{code_uid}/codes_perf.csv'
+    parser.add_argument('--codes_dir_name', default='palm_opt_parse', type=str, choices=['vicuna_opt_codes', 'wizardcoder_opt_codes', 'codellama_opt_codes', 'gpt4_opt_codes', 'gpt3_opt_codes', 'starcoder_opt_codes', 'llama2_opt_codes', 'palm_opt_codes']) 
     args = parser.parse_args()
     return args
 
 def main():
     metrcs_df = []
     print(f'Start to evaluate optimized codes performance for {model_name}...\n')
-    for lang in ['c','cpp','python','cs']:#,'cs']:#,'cs'
+    for lang in ['c','cpp','python','cs']:
         for opt_type in ['mem','time']:
             perf_key = 'mean_peak_mem' if opt_type == 'mem' else 'mean_cpu_time'
             perf_unit = 'kb' if opt_type == 'mem' else 's'
-            err_flag = False# 防止有些语言在test_opt_codes.py没有测试完全，没有生成codes_perf.csv
+            err_flag = False# In case some codes are not fully tested in test_opt_codes.py (determined by whether codes_perf.csv exists)
             pass_rate = 0
             success_opt_rate = 0
             lang_dir = load_dir / Path(model_name) / Path(opt_type) / Path(lang)
             src_dirs = os.listdir(lang_dir)
             for src_dir in src_dirs:
                 print(f">> calculating {lang}-{src_dir} performance metrics:")
-                # 判断文件是否存在
-                if not os.path.exists(lang_dir / Path(src_dir) / Path('codes_perf.csv')):# or not os.path.exists(lang_dir / Path(src_dir) / Path('codes_perf2.csv')):
+                if not os.path.exists(lang_dir / Path(src_dir) / Path('codes_perf.csv')):
                     print('------------------------------------')
                     print(f"{lang}-{opt_type} is not fully tested")
                     print('------------------------------------')
@@ -57,7 +56,7 @@ def main():
 
                 print(f"unopt {opt_type} performance: {unopt_perf}+-{unopt_perf_dev} {perf_unit}")
                 
-                # 获取generated code 性能，统计通过率和性能优化率
+                # obtain the performance of generated optimized code，calculate the pass rate and success optimization rate
                 pass_flag = False
                 opt_flag = False
                 for opt_idx in range(5):
@@ -86,9 +85,9 @@ def main():
 if __name__ == '__main__':
     args = parse_arguments()
     model_name = args.codes_dir_name
-    load_dir = Path(__file__).parent.parent / Path('codes')
-    output_dir = Path(__file__).parent
+    load_dir = Path(__file__).parent.parent / Path('results') / Path('ans')
+    output_dir = Path(__file__).parent / Path('opt_scores')
+    output_dir.mkdir(exist_ok=True)
     main()
-# python cal_metrics.py --codes_dir_name palm_opt_parse > cal_palm_metrics.log
 
 
