@@ -13,7 +13,7 @@ The code summarization dataset is at `data/code_summarization_data.jsonl`. We ex
 
 1. `cd code_summarization`
 2. install `python>=3.9` (we only guarantee the code works on python 3.9)
-3. install `torch` based on your cuda version
+3. install `torch` (we suggest `torch==2.1.1`) based on your cuda version
 4. `pip install -r requirements.txt`
 
 ### 2. Inference
