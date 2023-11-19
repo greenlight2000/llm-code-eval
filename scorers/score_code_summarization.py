@@ -285,18 +285,18 @@ def cal_meteor_by_loc(load_path, output_dir, pred_field, ref_field):
 
 def main():
     load_name_llm_results = [
-        'repair_code_summarization_eval_codellama.jsonl',  # 
-        'repair_code_summarization_eval_gpt3.jsonl',  # 
-        'repair_code_summarization_eval_gpt4.jsonl',  # 
-        'repair_code_summarization_eval_llama2.jsonl',  # 
-        'repair_code_summarization_eval_palm.jsonl',  #
-        'repair_code_summarization_eval_starcoder.jsonl',  #
-        'repair_code_summarization_eval_vicuna.jsonl',  # 
-        'repair_code_summarization_eval_wizardcoder.jsonl'  #
+        'code_summarization_eval_codellama.jsonl',  # 
+        'code_summarization_eval_gpt3.jsonl',  # 
+        'code_summarization_eval_gpt4.jsonl',  # 
+        'code_summarization_eval_llama2.jsonl',  # 
+        'code_summarization_eval_palm.jsonl',  #
+        'code_summarization_eval_starcoder.jsonl',  #
+        'code_summarization_eval_vicuna.jsonl',  # 
+        'code_summarization_eval_wizardcoder.jsonl'  #
     ]
     for load_name_llm_result in load_name_llm_results:
         model_name = load_name_llm_result.split('_')[-1].split('.')[0]
-        load_path = str(Path(__file__).parent.parent / Path("results") / Path(load_name_llm_result))
+        load_path = str(Path(__file__).parent.parent / Path("results") / Path("raw") / Path(load_name_llm_result))
         output_dir = Path(__file__).parent / Path('summ_scores') / Path(model_name)
         output_dir.mkdir(exist_ok=True, parents=True)
         # calculate overall code summarization performance

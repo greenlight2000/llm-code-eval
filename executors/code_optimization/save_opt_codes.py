@@ -6,11 +6,12 @@ from pathlib import Path
 from collections import Counter
 from datasets import load_dataset
 import logging
+import json
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--code_test_data_name', default='mem_code_opt_inference_results_palm.jsonl', type=str)
+    parser.add_argument('--code_test_data_name', default='mem_code_opt_eval_palm.jsonl', type=str)
     parser.add_argument('--codes_dir_name', default='palm_opt_codes', type=str, choices=['vicuna_opt_codes', 'wizardcoder_opt_codes', 'codellama_opt_codes', 'gpt4_opt_codes', 'gpt3_opt_codes', 'starcoder_opt_codes', 'llama2_opt_codes', 'palm_opt_codes'])
     parser.add_argument('--opt_type', default='mem', choices=['mem', 'time'], type=str)
     parser.add_argument('--parse_code', action='store_true', default=False)
@@ -19,8 +20,6 @@ def parse_arguments():
     return args
 
 def main():
-    supported_langs = ['GNU C', 'GNU C++', 'Python 3', 'Mono C#']
-    langs_map = {'GNU C':'c', 'GNU C++':'cpp', 'Python 3':'python', 'Mono C#':'cs'}# 用于把specific的语言转化成general的路径名
     load_path = Path(__file__).parent.parent.parent / Path('results') / Path('raw') / Path(args.code_test_data_name)
     codes_dir = Path(__file__).parent.parent.parent / Path('results') / Path('ans') / Path(args.codes_dir_name)
     if not codes_dir.is_dir():
@@ -30,7 +29,6 @@ def main():
     print(dataset)
 
 
-    # save codes of four language clusters
     for example in tqdm(dataset):
         opt_type = args.opt_type
         lang = example['lang']
@@ -142,8 +140,7 @@ def parse_java_class_name(source_code):
     else:
         print('Class definition not found, use default source code.')
     return class_name, source_code
-import re
-import json
+
 def contains_json(text):
     brackets_pattern = r".*\{\s*\"optimized_code\":.*\}.*"
     return re.match(brackets_pattern, text, re.DOTALL)!=None

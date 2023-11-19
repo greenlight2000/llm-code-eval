@@ -13,12 +13,11 @@ import json
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--code_test_data_name', default='mem_code_opt_inference_palm.jsonl', type=str) # will read the submission dataset that is to be evaluated from './dataset/{code_test_data_name}'
-    parser.add_argument('--codes_dir_name', default='palm_opt_parse', type=str, choices=['vicuna_opt_codes', 'wizardcoder_opt_codes', 'codellama_opt_codes', 'gpt4_opt_codes', 'gpt3_opt_codes', 'starcoder_opt_codes', 'llama2_opt_codes', 'palm_opt_codes']) # same as --codes_dir_name in save_codes. source codes files to be evaluated should be stored at './codes/{args.codes_dir_name}/{lang_cluster}/{code_uid}
+    parser.add_argument('--code_opt_data_name', default='mem_code_opt_eval_palm.jsonl', type=str) # will read the submission dataset that is to be evaluated from './dataset/{code_opt_data_name}'
+    parser.add_argument('--codes_dir_name', default='palm_opt_codes', type=str, choices=['vicuna_opt_codes', 'wizardcoder_opt_codes', 'codellama_opt_codes', 'gpt4_opt_codes', 'gpt3_opt_codes', 'starcoder_opt_codes', 'llama2_opt_codes', 'palm_opt_codes']) # same as --codes_dir_name in save_codes. source codes files to be evaluated should be stored at './codes/{args.codes_dir_name}/{lang_cluster}/{code_uid}
     parser.add_argument('--opt_type', default='time', choices=['mem','time'] ,type=str) # 'mem' or 'time'
+    parser.add_argument('--retest', default=10, type=int) # number of times to retest the codes' performance
     args = parser.parse_args()
-
-
     return args
 
 
@@ -41,15 +40,15 @@ def count_memory_and_time(command, input=None):
             cpu_time = float(sum(p.cpu_times()[:4]))
             # print(p.pid)
         except:
-            # print('进程已经结束了')
+            # print('process ended')
             current_memory = 0
-        # print(f'当前内存: {current_memory}KB')
+        # print(f'current memory: {current_memory}KB')
         if current_memory > peak_memory:
             peak_memory = current_memory
         time.sleep(0.0002)
 
         timeout_cnt += 1
-        if timeout_cnt > 25000: # 2.5s
+        if timeout_cnt > 25000:
             print("Time limit exceeded!")
             process.kill()
             timeout_flag = True
@@ -88,7 +87,7 @@ def test_opt(compile_command, test_command, hidden_unit_tests, src_uid, lang, co
                 ) else False
         if is_passed is True:
             num_passed += 1
-        # 2. run2 get peak_mem and cpu_time # 下面是测试代码性能的，只测pass@5的话可以删掉
+        # 2. run2 get peak_mem and cpu_time
         peak_mem, cpu_time, timeout_flag = count_memory_and_time(test_command, input)
         if timeout_flag == True:
             timeout_code_uids.append(f'{src_uid}_{code_name}')
@@ -107,7 +106,7 @@ def test_opt(compile_command, test_command, hidden_unit_tests, src_uid, lang, co
     mean_mem = np.mean(np.array(tmp_testcases_perf).T[-1]).tolist()
     return pass_rate, mean_time, mean_mem, tmp_testcases_perf
 
-def test_unopt(compile_command, test_command, hidden_unit_tests, src_uid, lang, code_uid, retest=10):
+def test_unopt(compile_command, test_command, hidden_unit_tests, src_uid, lang, code_uid, retest):
     if compile_command is not None:
         outcome = execute_command(compile_command)
     num_passed = 0
@@ -127,14 +126,13 @@ def test_unopt(compile_command, test_command, hidden_unit_tests, src_uid, lang, 
         if is_passed is True:
             num_passed += 1
         # print(is_passed)
-        # 下面是测试代码性能的，只测pass@5的话可以删掉
-        peak_mem_li, cpu_time_li = [], []# shape: (num_test_cases, 10)
+        peak_mem_li, cpu_time_li = [], []# shape: (num_test_cases, n)
         for i in range(retest):
             peak_mem, cpu_time, timeout_flag = count_memory_and_time(test_command, input)
             if timeout_flag == True:
                 timeout_code_uids.append(f'{src_uid}_{code_uid}')
-                peak_mem_li = [0]*10
-                cpu_time_li = [0]*10
+                peak_mem_li = [0]*retest
+                cpu_time_li = [0]*retest
                 break
             peak_mem_li.append(float(peak_mem))
             cpu_time_li.append(float(cpu_time))
@@ -145,8 +143,8 @@ def test_unopt(compile_command, test_command, hidden_unit_tests, src_uid, lang, 
         mean_time_li.append(cpu_time_li)
     pass_rate = round(100. * num_passed / len(hidden_unit_tests), 2)
     print(f'unopt pass rate: {pass_rate}% [{num_passed}/{len(hidden_unit_tests)}]')
-    mean_mem_li = np.mean(mean_mem_li, axis=0) # shape: (10,), calculate the mean testcases peak memory value for each run in the 10 runs
-    mean_time_li = np.mean(mean_time_li, axis=0) # shape: (10,), calculate the mean testcases cpu time value for each run in the 10 runs
+    mean_mem_li = np.mean(mean_mem_li, axis=0) # shape: (n,), calculate the mean testcases peak memory value for each run in the n runs
+    mean_time_li = np.mean(mean_time_li, axis=0) # shape: (n,), calculate the mean testcases cpu time value for each run in the n runs
     return pass_rate, mean_time_li, mean_mem_li, tmp_testcases_perf
 
 def cal_passrate_perfmetrcs(example):
@@ -165,95 +163,34 @@ def cal_passrate_perfmetrcs(example):
         # example['pass_rate'] = 0.00
     else:
         if lang == 'GNU C':
-            os.chdir(f'./codes/{args.codes_dir_name}/{args.opt_type}/c/{src_uid}')
+            os.chdir(str(code_dir / Path(args.opt_type) / Path('c') / Path(src_uid)))
             print(os.getcwd())
-            compile_command_template = 'gcc -fno-optimize-sibling-calls -w -fno-strict-aliasing -DONLINE_JUDGE -include limits.h -fno-asm -s -O2 -DONLINE_JUDGE -include math.h -static -lm -o {code_name} {code_name}.c'#'gcc -fPIC -O0 code.c -o code'
+            compile_command_template = 'gcc -fno-optimize-sibling-calls -w -fno-strict-aliasing -DONLINE_JUDGE -include limits.h -fno-asm -s -O2 -DONLINE_JUDGE -include math.h -static -lm -o {code_name} {code_name}.c'
             test_command_template = './{code_name}'
         elif lang == 'GNU C++':
-            os.chdir(f'./codes/{args.codes_dir_name}/{args.opt_type}/cpp/{src_uid}')
+            os.chdir(str(code_dir / Path(args.opt_type) / Path('cpp') / Path(src_uid)))
             print(os.getcwd())
-            compile_command_template = 'g++ -s -x c++ -O2 -w -DONLINE_JUDGE -include math.h -include limits.h -static -lm -o {code_name} {code_name}.cpp'#'gcc -fPIC -O0 code.c -o code'
+            compile_command_template = 'g++ -s -x c++ -O2 -w -DONLINE_JUDGE -include math.h -include limits.h -static -lm -o {code_name} {code_name}.cpp'
             test_command_template = './{code_name}'
         elif lang == 'Mono C#':
-            os.chdir(f'./codes/{args.codes_dir_name}/{args.opt_type}/cs/{src_uid}')
+            os.chdir(str(code_dir / Path(args.opt_type) / Path('cs') / Path(src_uid)))
             print(os.getcwd())
-            compile_command_template = 'csc /out:{code_name} {code_name}.cs'# 'g++ -fPIC -O0 code.cpp -o code'
+            compile_command_template = 'csc /out:{code_name} {code_name}.cs'
             test_command_template = 'mono {code_name}'
-        elif lang == 'Java 8':
-            os.chdir(f'./codes/{args.codes_dir_name}/{args.opt_type}/java/{src_uid}')
-            print(os.getcwd())
-
-            # find class name in the java source code
-            pattern = r'public\s+(?:final\s+)?class\s+(\w+)'
-            matches = re.search(pattern, source_code)
-            if matches:
-                class_name = matches.group(1)
-            else:
-                print('Class name not found, use default class name.')
-                class_name = 'code'
-
-            compile_command = f'javac {class_name}.java'
-            outcome = execute_command(compile_command)
-            # print(outcome)
-
-            num_passed = 0
-            for index, hidden_unit_test in enumerate(hidden_unit_tests):
-                input = hidden_unit_test['input']
-                output = hidden_unit_test['output'][0]
-
-                test_command = f'java {class_name}'
-                outcome = execute_command(test_command, input)
-                # print(outcome)
-
-                is_passed = True if outcome.returncode == 0 and (
-                        outcome.stdout in output 
-                        or outcome.stdout.rstrip() in output 
-                        or outcome.stdout.replace('\n','\r\n') in output 
-                        or outcome.stdout.replace('\n', '\r\n').rstrip() in output
-                        ) else False
-                if is_passed is True:
-                    num_passed += 1
-                # print(is_passed)
-
-                peak_mem, cpu_time, timeout_flag = count_memory_and_time(test_command, input)
-                if timeout_flag == True:
-                    # if code_uid in ['1d3a8804e288dee710091aedda77299c']:# 这些题目有问题，计算perf时会运行超时一直不退出（可能是死锁）
-                    timeout_code_uids.append(code_uid)
-                    example['pass_rate'] = 0
-                    example['mean_cpu_time'] = 0
-                    example['mean_peak_mem'] = 0
-                    os.chdir('../../../..')
-                    return example
-                testcases_perf.append([ 
-                    src_uid, lang, code_uid, input, output, is_passed, cpu_time, peak_mem
-                ])
-            testcases_perf_df = pd.DataFrame(testcases_perf, columns=['src_uid','lang','code_uid','test_input','test_output','is_passed','cpu_time','peak_mem'])
-            testcases_perf_df.to_csv("./perf.csv", index=False)# stored the testcase-level performance of the code under its code_uid dir
-            pass_rate = round(100. * num_passed / num_hidden_unit_tests, 2)
-            print(f'Pass rate: {pass_rate}% [{num_passed}/{num_hidden_unit_tests}]')
-
-            os.chdir('../../../..')
-            # print(os.getcwd())
-
-            example['pass_rate'] = pass_rate
-            example['mean_cpu_time'] = testcases_perf_df['cpu_time'].mean()
-            example['mean_peak_mem'] = testcases_perf_df['peak_mem'].mean()
-
         elif lang == 'Python 3':
-            os.chdir(f'./codes/{args.codes_dir_name}/{args.opt_type}/python/{src_uid}')
+            os.chdir(str(code_dir / Path(args.opt_type) / Path('python') / Path(src_uid)))
             print(os.getcwd())
             compile_command_template = None
             test_command_template = 'python {code_name}.py'
         else:
             print('Unsupported language:', lang)
-            os.chdir('../../../../../')
+            # os.chdir('../../../../../')
             return example
         
         if os.path.exists(f'./codes_perf.csv'):
-            os.chdir('../../../../../')
+            # os.chdir('../../../../../')
             return example
         # test unoptimized code
-        retest = 20
         compile_command = compile_command_template.format(code_name='unopt') if compile_command_template is not None else None
         test_command = test_command_template.format(code_name='unopt')
         pass_rate, mean_time_li, mean_mem_li, tmp_testcases_perf = test_unopt(compile_command, test_command, hidden_unit_tests, src_uid, lang, code_uid, retest)
@@ -276,41 +213,20 @@ def cal_passrate_perfmetrcs(example):
         testcases_perf_df.to_csv("./testcases_perf.csv", index=False)# stored the testcase-level performance of the code under its code_uid dir
         code_perf_df = pd.DataFrame(code_perf, columns=['code_name','src_uid','lang','code_uid','pass_rate','mean_cpu_time','mean_peak_mem'])
         code_perf_df.to_csv("./codes_perf.csv", index=False)# stored the code-level performance of the code under its code_uid dir
-        os.chdir('../../../../../')
+        # os.chdir('../../../../../')
     return example
 
 
 def main():
-    load_path = Path(__file__).parent.parent.parent / Path('results') / Path('raw') / Path(args.code_test_data_name)
-    dataset = load_dataset('json', split='train', data_files=str(load_path))
+    dataset = load_dataset('json', split='train', data_files=str(load_path)).select(range(10))
     dataset = dataset.map(cal_passrate_perfmetrcs)
 
 
 
 if __name__ == '__main__':
     args = parse_arguments()
+    load_path = Path(__file__).parent.parent.parent / Path('results') / Path('raw') / Path(args.code_opt_data_name)
+    code_dir = Path(__file__).parent.parent.parent / Path('results') / Path('ans') / Path(args.codes_dir_name)
+    retest = args.retest
     timeout_code_uids = []
     main()
-    # python test_opt_codes.py --code_test_data_name mem_code_opt_inference_vicuna.jsonl --codes_dir_name vicuna_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_test_data_name time_code_opt_inference_vicuna.jsonl --codes_dir_name vicuna_opt_parse --opt_type time
-
-    # python test_opt_codes.py --code_test_data_name mem_code_opt_inference_wizardcoder.jsonl --codes_dir_name wizardcoder_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_test_data_name time_code_opt_inference_wizardcoder.jsonl --codes_dir_name wizardcoder_opt_parse --opt_type time
-
-    # python test_opt_codes.py --code_test_data_name mem_code_opt_data_codellama.jsonl --codes_dir_name codellama_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_test_data_name time_code_opt_data_codellama.jsonl --codes_dir_name codellama_opt_parse --opt_type time
-    
-    # python test_opt_codes.py --code_test_data_name mem_code_opt_data_gpt4.jsonl --codes_dir_name gpt4_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_test_data_name time_code_opt_data_gpt4.jsonl --codes_dir_name gpt4_opt_parse --opt_type time
-
-    # python test_opt_codes.py --code_test_data_name mem_code_opt_data_gpt3.jsonl --codes_dir_name gpt3_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_test_data_name time_code_opt_data_gpt3.jsonl --codes_dir_name gpt3_opt_parse --opt_type time
-
-    # python test_opt_codes.py --code_test_data_name mem_code_opt_data_llama2.jsonl --codes_dir_name llama2_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_test_data_name time_code_opt_data_llama2.jsonl --codes_dir_name llama2_opt_parse --opt_type time
-
-    # python test_opt_codes.py --code_test_data_name mem_code_opt_data_palm.jsonl --codes_dir_name palm_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_test_data_name time_code_opt_data_palm.jsonl --codes_dir_name palm_opt_parse --opt_type time
-
-    # python test_opt_codes.py --code_test_data_name mem_code_opt_data_starcoder.jsonl --codes_dir_name starcoder_opt_parse --opt_type mem
-    # python test_opt_codes.py --code_test_data_name time_code_opt_data_starcoder.jsonl --codes_dir_name starcoder_opt_parse --opt_type time

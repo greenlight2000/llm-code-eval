@@ -243,8 +243,8 @@ def main():
     dataset.cleanup_cache_files()  # for multiple evaluation
     print(dataset)
     if 'code_optimization' in args.data_load_name:
-        mem_save_path = Path(__file__).parent.parent / Path('results') / Path(f"mem_{args.result_save_name}")
-        time_save_path = Path(__file__).parent.parent / Path('results') / Path(f"time_{args.result_save_name}")
+        mem_save_path = Path(__file__).parent.parent / Path('results') / Path('raw') / Path(f"mem_{args.result_save_name}")
+        time_save_path = Path(__file__).parent.parent / Path('results') / Path('raw') / Path(f"time_{args.result_save_name}")
         logging.info("=====start mem optimiing=====")
         mem_ds = dataset.map(add_mem_optimization)
         mem_ds.to_json(mem_save_path, lines=True)
@@ -252,7 +252,7 @@ def main():
         time_ds = dataset.map(add_time_optimization)
         time_ds.to_json(time_save_path, lines=True)
     elif "code_summarization" in args.data_load_name:
-        save_path = Path(__file__).parent.parent / Path('results') / Path(args.result_save_name)
+        save_path = Path(__file__).parent.parent / Path('results') / Path('raw') / Path(args.result_save_name)
         dataset = dataset.map(add_code_summ)
         dataset.to_json(save_path, lines=True)
 
@@ -306,4 +306,3 @@ if __name__ == '__main__':
     max_new_tokens = 5120
 
     main()
-    # python scripts/eval_starcoder_opt.py --checkpoint {absolute_path_to_Llama_dir} --data_load_name code_summarization_dataset_with_gt.jsonl --result_save_name code_summ_inference_starcoder.jsonl --log_file_name code_summ_inference_starcoder.log

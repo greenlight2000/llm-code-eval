@@ -236,8 +236,8 @@ def main():
     dataset.cleanup_cache_files()  # for multiple evaluation
     print(dataset)
     if 'code_optimization' in args.data_load_name:
-        mem_save_path = Path(__file__).parent.parent / Path('results') / Path(f"mem_{args.result_save_name}")
-        time_save_path = Path(__file__).parent.parent / Path('results') / Path(f"time_{args.result_save_name}")
+        mem_save_path = Path(__file__).parent.parent / Path('results') / Path('raw') / Path(f"mem_{args.result_save_name}")
+        time_save_path = Path(__file__).parent.parent / Path('results') / Path('raw') / Path(f"time_{args.result_save_name}")
         logging.info("=====start mem optimiing=====")
         mem_ds = dataset.map(add_mem_optimization)
         mem_ds.to_json(mem_save_path, lines=True)
@@ -245,7 +245,7 @@ def main():
         time_ds = dataset.map(add_time_optimization)
         time_ds.to_json(time_save_path, lines=True)
     elif "code_summarization" in args.data_load_name:
-        save_path = Path(__file__).parent.parent / Path('results') / Path(args.result_save_name)
+        save_path = Path(__file__).parent.parent / Path('results') / Path('raw') / Path(args.result_save_name)
         dataset = dataset.map(add_code_summ)
         dataset.to_json(save_path, lines=True)
 
@@ -288,4 +288,3 @@ if __name__ == '__main__':
     max_tokens = model_max_tokens.get(args.model) if model_max_tokens.get(args.model) is not None else 0
 
     main()
-    # python scripts/eval_gpt.py
