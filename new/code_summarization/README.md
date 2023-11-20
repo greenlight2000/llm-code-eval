@@ -35,6 +35,7 @@ We provide the following closed-sourced LLMs inference scripts for you:
 | GPT-3.5    | gpt-3.5-turbo-0613 | run_gpt.py   |
 
 For PaLM 2, you can run the following command by replacing `google_api_key` with your own PaLM API key.
+
 `python run_palm.py --api_key google_api_key --data_load_name data/code_summarization_data.jsonl --result_save_name code_summ_infer_palm.jsonl --log_file_name code_summ_infer_palm.log`
 
 For GPT-4 and GPT-3.5, you can run the following command by replacing `openai_api_key` with your own OpenAI API key, `model_version` with specific model version.
