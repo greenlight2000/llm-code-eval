@@ -2,7 +2,7 @@
 
 ### Data
 
-The automated testing dataset is at `data/automated_testing_data.jsonl`. We explain the fields of the data below:
+The automated testing dataset is located in `data/automated_testing_data.jsonl`. The fields of the data are explained below:
 
 
 |              Field              |                                                 Description                                                 |
