@@ -1,6 +1,6 @@
-## Code Summarization
+# Code Summarization
 
-### Data
+## Data
 The code summarization dataset is located in `data/code_summarization_data.jsonl`. The fields of the data are explained below:
 
 | field | description |
@@ -10,18 +10,18 @@ The code summarization dataset is located in `data/code_summarization_data.jsonl
 | lang_cluster | the programming language of the source code |
 | human_summarization | a piece of reference nl summarization for the source code |
 
-### Installation
+## Installation
 
 1. `cd code_summarization`
 2. install `python>=3.9` (we use `python==3.9`)
 3. install `torch` (we suggest `torch==2.1.1`) based on your cuda version
 4. `pip install -r requirements.txt`
 
-### Inference
+## Inference
 
 Run the inference scripts to get the inference results of the targeted LLMs. The inference results `code_summ_data_{modelname}.jsonl` will be saved under the `inference/results` folder. The inference logs `code_summ_log_{model_name}.log` will be saved under the `inference/logs` folder. 
 
-#### Closed-sourced LLMs
+### Closed-sourced LLMs
 
 We provide the following closed-sourced LLMs inference scripts for you:
 
@@ -44,7 +44,7 @@ For GPT-4 and GPT-3.5, you can run the following command by replacing `openai_ap
 
 
 
-#### Open-sourced LLMs
+### Open-sourced LLMs
 
 We provide the following open-sourced LLMs inference scripts for you:
 
@@ -64,7 +64,7 @@ For open-sourced HuggingFace models, you can run the following command by replac
 An example of running the Code LLaMA model is:
 `python run_codellama.py --access_token access_token --cache_dir cache_dir --checkpoint codellama/CodeLlama-34b-Instruct-hf --data_load_name data/code_summarization_data.jsonl --result_save_name code_summ_infer_codellama.jsonl --log_file_name code_summ_infer_codellama.log`
 
-### Evaluation
+## Evaluation
 
 1. `cd ../evaluator` 
 2. Execute the command `python score_code_summarization.py --llm_infer_result infer_file`, substituting 'infer_file' with the name of the llm's inference file (for example, 'code_summ_infer_palm.jsonl'). This will generate scores for the targeted llm's inference results, which will be saved in the directory `evaluator/summ_scores/`.
