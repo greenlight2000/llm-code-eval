@@ -1,6 +1,6 @@
-## Code Optimization
+# Code Optimization
 
-### Data
+## Data
 The code optimization dataset is located in `data/code_optimization_data.jsonl`. The fields of the data are explained below:
 
 | field | description |
@@ -13,18 +13,18 @@ The code optimization dataset is located in `data/code_optimization_data.jsonl`.
 | time_baseline_source_code | the human-submitted code solution that have high execution time |
 | testcases | a list of testcases of the coding problem, each testcase contains two fields: "input" and "output" |
 
-### Dependence
+## Dependence
 
 1. `cd code_optimization`
 2. install `python>=3.9` (we only guarantee the code works on python 3.9), `GNU C 9.4.0`, `GNU C++ 9.4.0`, `Mono C# 6.12.0.200` environment on your Linux machine. (here are some useful links for installing [GCC](https://linuxize.com/post/how-to-install-gcc-on-ubuntu-20-04/) and [Mono C#](https://linuxize.com/post/how-to-install-mono-on-ubuntu-20-04/) on Ubuntu 20.04)
 3. install `torch` (we suggest `torch==2.1.1`) based on your cuda version
 4. `pip install -r requirements.txt`
 
-### Inference
+## Inference
 
 Run the inference scripts to get the inference results of the targeted LLMs. The inference results `code_opt_result_{model_name}.jsonl` will be saved under the `inference/results` folder. The inference logs `code_opt_log_{model_name}.log` will be saved under the `inference/logs` folder.
 
-#### Closed-sourced LLMs
+### Closed-sourced LLMs
 
 We provide the following closed-sourced LLMs inference scripts for you:
 
@@ -47,7 +47,7 @@ For GPT-4 and GPT-3.5, you can run the following command by replacing `openai_ap
 `python run_gpt.py --api_key openai_api_key --model gpt-3.5-turbo-0613 --data_load_name code_optimization_data.jsonl --result_save_name code_opt_infer_gpt3.jsonl --log_file_name code_opt_infer_gpt3.log`
 
 
-#### Open-sourced LLMs
+### Open-sourced LLMs
 
 We provide the following open-sourced LLMs inference scripts for you:
 
@@ -69,7 +69,7 @@ An example of running the codellama model is:
 `python run_codellama.py --access_token access_token --cache_dir cache_dir --checkpoint codellama/CodeLlama-34b-Instruct-hf --data_load_name code_optimization_data.jsonl --result_save_name code_opt_infer_codellama.jsonl --log_file_name code_opt_infer_codellama.log`
 
 
-### Evaluation
+## Evaluation
 
 After getting the inference results, go through the following steps to parse the code, execute and get the efficiency performance, and finally get the evaluation metrics.
 
