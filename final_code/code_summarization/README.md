@@ -19,8 +19,6 @@ The code summarization dataset is at `data/code_summarization_data.jsonl`. We ex
 
 ### Inference
 
-`cd inference`
-
 Run the inference scripts to get the inference results of the targeted LLMs. The inference results `code_summ_data_{modelname}.jsonl` will be saved under the `inference/results` folder. The inference logs `code_summ_log_{model_name}.log` will be saved under the `inference/logs` folder. 
 
 #### Closed-sourced LLMs
@@ -60,10 +58,10 @@ We provide the following open-sourced LLMs inference scripts for you:
 
 
 For open-sourced HuggingFace models, you can run the following command by replacing `huggingface_access_token` with your own HuggingFace access token, `cache_dir` with path to a directory in which a downloaded pretrained model and tokenizer should be cached, `model_checkpoint` with specific model checkpoint.
+
 `python inference/run_{model_name}.py --access_token huggingface_access_token --cache_dir cache_dir --checkpoint model_checkpoint --data_load_name data/code_summarization_data.jsonl --result_save_name code_summ_infer_{model_name}.jsonl --log_file_name code_summ_infer_{model_name}.log`
 
 An example of running the Code LLaMA model is:
-
 `python run_codellama.py --access_token access_token --cache_dir cache_dir --checkpoint codellama/CodeLlama-34b-Instruct-hf --data_load_name data/code_summarization_data.jsonl --result_save_name code_summ_infer_codellama.jsonl --log_file_name code_summ_infer_codellama.log`
 
 ### Evaluation
