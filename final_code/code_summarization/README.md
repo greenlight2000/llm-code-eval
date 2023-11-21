@@ -1,7 +1,7 @@
 ## Code Summarization
 
 ### Data
-The code summarization dataset is at `data/code_summarization_data.jsonl`. We explain the fields of the data below:
+The code summarization dataset is located in `data/code_summarization_data.jsonl`. The fields of the data are explained below:
 
 | field | description |
 | :---: | :---: |
