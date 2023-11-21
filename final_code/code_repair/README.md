@@ -1,7 +1,7 @@
 # Code Repair
 
 ## Data
-The code review dataset is at `data/code_repair_data.jsonl`. We explain the fields of the data below:
+The code review dataset is located in `data/code_repair_data.jsonl`. The fields of the data are explained below:
 
 | Field                	   | Explanation                                          	             |
 |--------------------------|--------------------------------------------------------------------|
