@@ -1,6 +1,6 @@
-## Code Smell Task
+# Code Smell
 
-### Data
+## Data
 
 The code smell dataset is located in `data/code_smell_data.jsonl`. The fields of the data are explained below:
 
@@ -13,18 +13,18 @@ The code smell dataset is located in `data/code_smell_data.jsonl`. The fields of
 |  smell_code  |   smelly code snippet in the source code   |
 |    smell    | code smell type of the smelly code snippet |
 
-### Dependence
+## Dependence
 
 1. `cd code_smell`
 2. install `python>=3.9` (we use `python==3.9`)
 3. install `torch` (we suggest `torch==2.1.1`) based on your cuda version
 4. `pip install -r requirements.txt`
 
-### Inference
+## Inference
 
 Run the inference scripts to get the inference results of the targeted LLMs. The inference results `code_smell_result_{model_name}.jsonl` will be saved under the `inference/results` folder. The inference logs `code_smell_log_{model_name}.log` will be saved under the `inference/logs` folder.
 
-#### Closed-sourced LLMs
+### Closed-sourced LLMs
 
 We provide the following closed-sourced LLMs inference scripts for you:
 
@@ -43,7 +43,7 @@ For GPT, you can run the following command by replacing `openai_api_key` with yo
 
 `python inference/run_gpt.py --api_key openai_api_key --model model_version`
 
-#### Open-sourced LLMs
+### Open-sourced LLMs
 
 We provide the following open-sourced LLMs inference scripts for you:
 
@@ -60,6 +60,6 @@ For HuggingFace models, you can run the following command by replacing `huggingf
 
 `python inference/run_{model_name}.py --access_token huggingface_access_token --cache_dir cache_dir --checkpoint model_checkpoint`
 
-### Evaluation
+## Evaluation
 
 Run `python evaluator/score.py` to get the scores of the targeted LLMs' inference results. The scores `code_smell_score.json` will be saved under the `evaluator/scores` folder.
