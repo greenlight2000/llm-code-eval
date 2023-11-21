@@ -1,6 +1,6 @@
-## Automated Testing Task
+# Automated Testing Task
 
-### Data
+## Data
 
 The automated testing dataset is located in `data/automated_testing_data.jsonl`. The fields of the data are explained below:
 
@@ -38,11 +38,11 @@ The automated testing dataset is located in `data/automated_testing_data.jsonl`.
 5. install `torch` (we suggest `torch==2.1.1`) based on your cuda version
 6. `pip install -r requirements.txt`
 
-### Inference
+## Inference
 
 Run the inference scripts to get the inference results of the targeted LLMs. The inference results `automated_testing_result_{model_name}.jsonl` will be saved under the `inference/results` folder. The inference logs `automated_testing_log_{model_name}.log` will be saved under the `inference/logs` folder.
 
-#### Closed-sourced LLMs
+### Closed-sourced LLMs
 
 We provide the following closed-sourced LLMs inference scripts for you:
 
@@ -61,7 +61,7 @@ For GPT, you can run the following command by replacing `openai_api_key` with yo
 
 `python inference/run_gpt.py --api_key openai_api_key --model model_version`
 
-#### Open-sourced LLMs
+### Open-sourced LLMs
 
 We provide the following open-sourced LLMs inference scripts for you:
 
@@ -78,7 +78,7 @@ For HuggingFace models, you can run the following command by replacing `huggingf
 
 `python inference/run_{model_name}.py --access_token huggingface_access_token --cache_dir cache_dir --checkpoint model_checkpoint`
 
-### 3. Evaluation
+## Evaluation
 
 1. Run `python evaluator/test_codes.py` to parse the source codes into code files under `evaluator/codes` folder.
 2. Run `python evaluator/test_codes.py --result_name automated_testing_result_{model_name}.jsonl` to test the source codes using predicted testcases and obtain the corresponding pass rate, line coverage, branch coverage.
