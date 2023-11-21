@@ -2,7 +2,7 @@
 
 ### Data
 
-The code smell dataset is at `data/code_smell_data.jsonl`. We explain the fields of the data below:
+The code smell dataset is located in `data/code_smell_data.jsonl`. The fields of the data are explained below:
 
 
 |    Field    |                 Description                 |
