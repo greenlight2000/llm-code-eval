@@ -1,4 +1,4 @@
-# Automated Testing Task
+# Automated Testing
 
 ## Data
 
