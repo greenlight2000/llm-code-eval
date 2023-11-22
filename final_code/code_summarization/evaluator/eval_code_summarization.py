@@ -1,13 +1,12 @@
-import argparse
 import json
+import logging
 import evaluate
+import argparse
+import statistics
+from pathlib import Path
 from datasets import load_dataset
 from nltk.translate.meteor_score import meteor_score
-import logging
-from pathlib import Path
-import statistics
 
-import json
 def cal_bleu_iter(load_path, output_dir, pred_field, ref_field):
     dataset = load_dataset("json", data_files=load_path, split="train")
     for d in dataset:
