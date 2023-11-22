@@ -1,13 +1,12 @@
-import argparse
 import json
+import logging
 import evaluate
+import argparse
+import statistics
+from pathlib import Path
 from datasets import load_dataset
 from nltk.translate.meteor_score import meteor_score
-import logging
-from pathlib import Path
-import statistics
 
-import json
 def cal_bleu_iter(load_path, output_dir, pred_field, ref_field):
     dataset = load_dataset("json", data_files=load_path, split="train")
     for d in dataset:
@@ -20,6 +19,7 @@ def cal_bleu_iter(load_path, output_dir, pred_field, ref_field):
                 json.dump(bleu_result, f)
                 f.write("\n")
     return bleu_result
+
 def cal_rouge_iter(load_path, output_dir, pred_field, ref_field):
     dataset = load_dataset("json", data_files=load_path, split="train")
     for d in dataset:
@@ -32,6 +32,7 @@ def cal_rouge_iter(load_path, output_dir, pred_field, ref_field):
                 json.dump(rouge_result, f)
                 f.write("\n")
     return rouge_result
+
 def cal_bleu(load_path, output_dir, pred_field, ref_field):
     try:
         dataset = load_dataset("json", data_files=load_path, split="train")
@@ -42,6 +43,7 @@ def cal_bleu(load_path, output_dir, pred_field, ref_field):
         with open(str(output_dir / "avg_bleu_result.json"), "w") as f:
             json.dump(bleu_result, f)
         return bleu_result
+
 def cal_rouge(load_path, output_dir, pred_field, ref_field):
     try:
         dataset = load_dataset("json", data_files=load_path, split="train")
@@ -52,6 +54,7 @@ def cal_rouge(load_path, output_dir, pred_field, ref_field):
         with open(str(output_dir / "avg_rouge_result.json"), "w") as f:
             json.dump(rouge_result, f)
         return rouge_result
+
 def cal_bertscore(load_path, output_dir, pred_field, ref_field):
     try:
         dataset = load_dataset("json", data_files=load_path, split="train")
@@ -63,6 +66,7 @@ def cal_bertscore(load_path, output_dir, pred_field, ref_field):
         with open(str(output_dir / "avg_bertscore_result.json"), "w") as f:
             json.dump(bertscore_result, f)
     return bertscore_result
+
 def cal_meteor(load_path, output_dir, pred_field, ref_field):
     dataset = load_dataset("json", data_files=load_path, split="train")
     meteor_results = []
@@ -80,8 +84,6 @@ def cal_meteor(load_path, output_dir, pred_field, ref_field):
             json.dump(results, f)
         return results
 
-
-
 def cal_bleu_by_lang(load_path, output_dir, pred_field, ref_field):
     dataset = load_dataset("json", data_files=load_path, split="train")
     langs = set(dataset['lang'])
@@ -95,6 +97,7 @@ def cal_bleu_by_lang(load_path, output_dir, pred_field, ref_field):
             logging.error(f"error at {lang}: {e}")
         with open(str(output_dir / f"{lang}.json"), "w") as f:
             json.dump(bleu_result, f)
+
 def cal_rouge_by_lang(load_path, output_dir, pred_field, ref_field):
     dataset = load_dataset("json", data_files=load_path, split="train")
     langs = set(dataset['lang'])
@@ -108,6 +111,7 @@ def cal_rouge_by_lang(load_path, output_dir, pred_field, ref_field):
             logging.error(f"error at {lang}: {e}")
         with open(str(output_dir / f"{lang}.json"), "w") as f:
             json.dump(rouge_result, f)
+
 def cal_bertscore_by_lang(load_path, output_dir, pred_field, ref_field):
     dataset = load_dataset("json", data_files=load_path, split="train")
     langs = set(dataset['lang'])
@@ -126,6 +130,7 @@ def cal_bertscore_by_lang(load_path, output_dir, pred_field, ref_field):
             result = {"error": e}
         with open(str(output_dir / f"{lang}.json"), "w") as f:
             json.dump(result, f)
+
 def cal_meteor_by_lang(load_path, output_dir, pred_field, ref_field):
     dataset = load_dataset("json", data_files=load_path, split="train")
     langs = set(dataset['lang'])

@@ -29,7 +29,7 @@ The automated testing dataset is located in `data/automated_testing_data.jsonl`.
 |    human_sample_line_coverage    |                          average of 5 sample human-written testcases line coverage                          |
 |   human_sample_branch_coverage   |                         average of 5 sample human-written testcases branch coverage                         |
 
-### Dependence
+## Dependence
 
 1. `cd automated_testing`
 2. install `python>=3.9` (we use `python==3.9`)
@@ -80,6 +80,6 @@ For HuggingFace models, you can run the following command by replacing `huggingf
 
 ## Evaluation
 
-1. Run `python evaluator/test_codes.py` to parse the source codes into code files under `evaluator/codes` folder.
+1. Run `python evaluator/save_codes.py` to parse the source codes into code files under `evaluator/codes` folder.
 2. Run `python evaluator/test_codes.py --result_name automated_testing_result_{model_name}.jsonl` to test the source codes using predicted testcases and obtain the corresponding pass rate, line coverage, branch coverage.
 3. Run `python evaluator/score.py` to get the scores of the targeted LLMs' inference results. The scores `automated_testing_score.json` will be saved under the `evaluator/scores` folder.

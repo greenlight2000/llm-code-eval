@@ -1,12 +1,3 @@
-# -*- encoding: utf-8 -*-
-'''
-@File    :   run.py
-@Time    :   2023/09/12 11:01:21
-@Author  :   Tingyu LIN
-@Version :   1.0
-@Contact :   timmylinty@gmail.com
-'''
-
 import os
 import os.path as osp
 import argparse

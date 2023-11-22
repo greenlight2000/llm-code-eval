@@ -1,13 +1,12 @@
 import re
+import json
+import logging
 import argparse
 
 from tqdm import tqdm
 from pathlib import Path
 from collections import Counter
 from datasets import load_dataset
-import logging
-import json
-
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -26,7 +25,6 @@ def main():
 
     dataset = load_dataset('json', split='train', data_files=str(load_path))
     print(dataset)
-
 
     for example in tqdm(dataset):
         opt_type = args.opt_type
@@ -116,6 +114,7 @@ def main():
 def contains_json(text):
     brackets_pattern = r".*\{\s*\"optimized_code\":.*\}.*"
     return re.match(brackets_pattern, text, re.DOTALL)!=None
+
 def get_json(text):
     lpos = text.find("\"optimized_code\"")
     rpos = lpos
@@ -123,9 +122,11 @@ def get_json(text):
         rpos = text.find("}", rpos+1)
     json_ret = "{"+text[lpos:rpos].strip()+"}"
     return json_ret
+
 def contain_tick(text):
     tick_pattern = r".*?(`.*`).*?"
     return re.match(tick_pattern, text, re.DOTALL)!=None
+
 def get_tick(text):
     tick_pattern = r".*?(`.*`).*?"
     return re.findall(tick_pattern, text, re.DOTALL)[0][1:-1]
@@ -137,6 +138,7 @@ def contains_code_snippets(text):
         return False
     else:
         return True
+
 def get_code_content(text):
     pattern = r"```(.+?)```"
     results = re.findall(pattern, text, re.DOTALL)
@@ -147,47 +149,40 @@ def get_code_content(text):
         for lang_pattern in lang_patterns:
             results = [re.sub(lang_pattern, '', result) for result in results]
     return results
+
 def parse_code(text, logger):
     logging.info(f"start parsing code for:\n{text}")
     if contains_json(text):
-        # print("contains json")
         logger.debug("text contains json")
         json_ret = get_json(text)
-        try:# {"optimized_code":"code"}
-            # print(f"try parse json")
+        try:
             logger.debug(f"try to parse json...")
             code = json.loads(json_ret)['optimized_code']
             logger.debug(f"succeed to parse json")
         except Exception as e:
-            # print(f"failed to parse json")
             logger.debug(f"failed to parse json")
-            if contains_code_snippets(json_ret):# ```code```
+            if contains_code_snippets(json_ret):
                 logger.debug("json text contains tripple backtick:```code```")
                 code = get_code_content(text)[0].replace("\\\"","\"").replace("\\\\n","\\n").replace("\\\\t","\\t")
-            elif contain_tick(json_ret):# {"optimized_code":`code`}
-                # print("contains tick")
+            elif contain_tick(json_ret):
                 logger.debug("json text contains backtick:`code`")
                 code = get_tick(json_ret)
                 code = """ """.replace(" ", code)
-            else:# {"optimized_code":"multirow code"}
-                # print("json text not contain tick, try to select quoted code")
+            else:
                 logger.debug("json text does not contain tick, try to select quoted code")
-                tmp = json_ret.replace("\"optimized_code\"", "").replace("\"\"\"", "\"")# 这样好吗
+                tmp = json_ret.replace("\"optimized_code\"", "").replace("\"\"\"", "\"")
                 lpos = tmp.find("\"")
                 rpos = lpos
                 while tmp.find("\"", rpos+1)!=-1:
                     rpos = tmp.find("\"", rpos+1)
                 code = tmp[lpos+1:rpos].strip()
                 code = """ """.replace(" ", code).replace("\\\"","\"").replace("\\\\n","\\n").replace("\\\\t","\\t")
-    elif contains_code_snippets(text):# ```code```
-        # print("contains code snippets")
+    elif contains_code_snippets(text):
         logger.debug("text contains ```code snippets```")
         code = get_code_content(text)[0]
     else:
-        # print("unknown pattern")
         logger.warning("unknown pattern")
         code = text
-    # print(code)
     logger.info(f"parsed code:\n{code}")
     return code
         
