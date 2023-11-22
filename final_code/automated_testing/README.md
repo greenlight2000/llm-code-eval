@@ -29,7 +29,7 @@ The automated testing dataset is located in `data/automated_testing_data.jsonl`.
 |    human_sample_line_coverage    |                          average of 5 sample human-written testcases line coverage                          |
 |   human_sample_branch_coverage   |                         average of 5 sample human-written testcases branch coverage                         |
 
-### Dependence
+## Dependence
 
 1. `cd automated_testing`
 2. install `python>=3.9` (we use `python==3.9`)
