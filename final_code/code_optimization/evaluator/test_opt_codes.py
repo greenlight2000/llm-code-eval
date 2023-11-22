@@ -24,7 +24,6 @@ def parse_arguments():
 def count_memory_and_time(command, input=None):
     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                text=True, shell=True)
-    # print(process)
     process.stdin.write(input)
     process.stdin.flush()
 
@@ -158,7 +157,6 @@ def cal_passrate_perfmetrcs(example):
 
     if num_hidden_unit_tests == 0:
         print('Failed to generate hidden unit tests:', code_uid)
-        # example['pass_rate'] = 0.00
     else:
         if lang == 'GNU C':
             os.chdir(str(code_dir / Path(args.opt_type) / Path('c') / Path(src_uid)))
