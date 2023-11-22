@@ -48,14 +48,13 @@ Download [delphi 7](http://altd.embarcadero.com/download/delphi/d7/english/ent/d
 
 ***
 
-Programs written in **other languages** need to be run using the ExecEval project, and the following dependencies need to be installed:
+Programs written in **other languages** need to be run using the ExecEval (under the project root directory), and the following dependencies need to be installed:
 
 ### ExecEval Dependencies:
 
 1. Install [docker-ce](https://docs.docker.com/engine/install/)
-2. Clone this [ExecEval](https://github.com/ntunlp/ExecEval)  repository.
-3. `cd ExecEval`
-4. `docker build . -t exec-eval:1.0`
+2. `cd ExecEval`
+3. `docker build . -t exec-eval:1.0`
 
 ## Inference
 Run the inference scripts to get the inference results of the targeted LLMs. The inference results `program_synthesis_result_{model_name}.jsonl` will be saved under the `inference/results` folder. The inference logs `program_synthesis_log_{model_name}.log` will be saved under the `inference/logs` folder.
@@ -90,8 +89,8 @@ python run_gpt.py
     --model model_specific_version
     --data_load_name program_synthesis_data.jsonl
     --candidate_num 5
-    --result_save_name program_synthesis_run_{model_name}.jsonl
-    --log_file_name program_synthesis_run_{model_name}.log
+    --result_save_name program_synthesis_run_{model_name}}.jsonl
+    --log_file_name program_synthesis_run_\{model_name\}.log
 ```
 
 

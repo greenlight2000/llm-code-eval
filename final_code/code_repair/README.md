@@ -53,14 +53,13 @@ Download [delphi 7](http://altd.embarcadero.com/download/delphi/d7/english/ent/d
 
 ***
 
-Programs written in **other languages** need to be run using the ExecEval project, and the following dependencies need to be installed:
+Programs written in **other languages** need to be run using the ExecEval (under the project root directory), and the following dependencies need to be installed:
 
 ### ExecEval Dependencies:
 
 1. Install [docker-ce](https://docs.docker.com/engine/install/)
-2. Clone this [ExecEval](https://github.com/ntunlp/ExecEval)  repository.
-3. `cd ExecEval`
-4. `docker build . -t exec-eval:1.0`
+2. `cd ExecEval`
+3. `docker build . -t exec-eval:1.0`
 
 
 

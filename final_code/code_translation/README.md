@@ -46,14 +46,13 @@ Download [delphi 7](http://altd.embarcadero.com/download/delphi/d7/english/ent/d
 
 ***
 
-Programs written in **other languages** need to be run using the ExecEval project, and the following dependencies need to be installed:
+Programs written in **other languages** need to be run using the ExecEval (under the project root directory), and the following dependencies need to be installed:
 
 ### ExecEval Dependencies:
 
 1. Install [docker-ce](https://docs.docker.com/engine/install/)
-2. Clone this [ExecEval](https://github.com/ntunlp/ExecEval)  repository.
-3. `cd ExecEval`
-4. `docker build . -t exec-eval:1.0`
+2. `cd ExecEval`
+3. `docker build . -t exec-eval:1.0`
 
 
 
@@ -110,7 +109,6 @@ We provide the following open-sourced LLMs inference scripts for you:
 
 For HuggingFace models, you can run the following command by replacing `huggingface_access_token` with your own HuggingFace access token, `cache_dir` with path to a directory in which a downloaded pretrained model and tokenizer should be cached, `model_checkpoint` with specific model checkpoint.
 
-
 ```angular2html
 python run_{model_name}.py 
     --access_token access_token
@@ -121,7 +119,6 @@ python run_{model_name}.py
     --result_save_name code_translation_run_{model_name}.jsonl
     --log_file_name code_translation_run_{model_name}.log
 ```
-
 
 ## Evaluator (executor & scorer)
 
