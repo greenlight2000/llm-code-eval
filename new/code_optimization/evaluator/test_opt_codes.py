@@ -24,25 +24,21 @@ def parse_arguments():
 def count_memory_and_time(command, input=None):
     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                text=True, shell=True)
-    # print(process)
     process.stdin.write(input)
     process.stdin.flush()
 
     cpu_time = 0
     peak_memory = 0
     timeout_flag = False
-    # start_time = time.time()
     timeout_cnt = 0
     while process.poll() is None:
         try:
             p = psutil.Process(process.pid)
-            current_memory = p.memory_full_info().uss / 1024
+            current_memory = p.memory_full_info().uss / 1024 # KB
             cpu_time = float(sum(p.cpu_times()[:4]))
             # print(p.pid)
-        except:
-            # print('process ended')
+        except:# process ended
             current_memory = 0
-        # print(f'current memory: {current_memory}KB')
         if current_memory > peak_memory:
             peak_memory = current_memory
         time.sleep(0.0002)
@@ -62,7 +58,6 @@ def execute_command(command, input=None):
     if input is not None:
         input = input.replace('\r\n', '\n')
     try:
-        # References: https://stackoverflow.com/questions/66480855/python-subprocess-run-timeout-behaving-differently-on-windows-vs-linux
         outcome = subprocess.run(command, input=input, capture_output=True, text=True, timeout=20, shell=True)
     except Exception as e:
         print('Error occurred while executing command:', e)
@@ -77,7 +72,7 @@ def test_opt(compile_command, test_command, hidden_unit_tests, src_uid, lang, co
     for index, hidden_unit_test in enumerate(hidden_unit_tests):
         input = hidden_unit_test['input']
         output = hidden_unit_test['output'][0]
-        # 1. run1 get is_passed
+        # 1. get is_passed
         outcome = execute_command(test_command, input)
         is_passed = True if outcome.returncode == 0 and (
                 outcome.stdout in output 
@@ -87,7 +82,7 @@ def test_opt(compile_command, test_command, hidden_unit_tests, src_uid, lang, co
                 ) else False
         if is_passed is True:
             num_passed += 1
-        # 2. run2 get peak_mem and cpu_time
+        # 2. get peak_mem and cpu_time
         peak_mem, cpu_time, timeout_flag = count_memory_and_time(test_command, input)
         if timeout_flag == True:
             timeout_code_uids.append(f'{src_uid}_{code_name}')
@@ -116,7 +111,6 @@ def test_unopt(compile_command, test_command, hidden_unit_tests, src_uid, lang, 
         input = hidden_unit_test['input']
         output = hidden_unit_test['output'][0]
         outcome = execute_command(test_command, input)
-        # print(outcome)
         is_passed = True if outcome.returncode == 0 and (
                 outcome.stdout in output 
                 or outcome.stdout.rstrip() in output 
@@ -125,8 +119,7 @@ def test_unopt(compile_command, test_command, hidden_unit_tests, src_uid, lang, 
                 ) else False
         if is_passed is True:
             num_passed += 1
-        # print(is_passed)
-        peak_mem_li, cpu_time_li = [], []# shape: (num_test_cases, n)
+        peak_mem_li, cpu_time_li = [], []# shape: (n_testcases, n_retest)
         for i in range(retest):
             peak_mem, cpu_time, timeout_flag = count_memory_and_time(test_command, input)
             if timeout_flag == True:
@@ -158,7 +151,6 @@ def cal_passrate_perfmetrcs(example):
 
     if num_hidden_unit_tests == 0:
         print('Failed to generate hidden unit tests:', code_uid)
-        # example['pass_rate'] = 0.00
     else:
         if lang == 'GNU C':
             os.chdir(str(code_dir / Path(args.opt_type) / Path('c') / Path(src_uid)))

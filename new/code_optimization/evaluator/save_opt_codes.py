@@ -150,44 +150,36 @@ def get_code_content(text):
 def parse_code(text, logger):
     logging.info(f"start parsing code for:\n{text}")
     if contains_json(text):
-        # print("contains json")
         logger.debug("text contains json")
         json_ret = get_json(text)
-        try:# {"optimized_code":"code"}
-            # print(f"try parse json")
+        try:# text is in the form of {"optimized_code":"code"}
             logger.debug(f"try to parse json...")
             code = json.loads(json_ret)['optimized_code']
             logger.debug(f"succeed to parse json")
-        except Exception as e:
-            # print(f"failed to parse json")
+        except Exception as e:# failed to parse json
             logger.debug(f"failed to parse json")
-            if contains_code_snippets(json_ret):# ```code```
+            if contains_code_snippets(json_ret):# text is in the form of ```code```
                 logger.debug("json text contains tripple backtick:```code```")
                 code = get_code_content(text)[0].replace("\\\"","\"").replace("\\\\n","\\n").replace("\\\\t","\\t")
-            elif contain_tick(json_ret):# {"optimized_code":`code`}
-                # print("contains tick")
+            elif contain_tick(json_ret):# text is in the form of {"optimized_code":`code`}
                 logger.debug("json text contains backtick:`code`")
                 code = get_tick(json_ret)
                 code = """ """.replace(" ", code)
-            else:# {"optimized_code":"multirow code"}
-                # print("json text not contain tick, try to select quoted code")
+            else:# text is in the form of {"optimized_code":"multirow code"}
                 logger.debug("json text does not contain tick, try to select quoted code")
-                tmp = json_ret.replace("\"optimized_code\"", "").replace("\"\"\"", "\"")# 这样好吗
+                tmp = json_ret.replace("\"optimized_code\"", "").replace("\"\"\"", "\"")
                 lpos = tmp.find("\"")
                 rpos = lpos
                 while tmp.find("\"", rpos+1)!=-1:
                     rpos = tmp.find("\"", rpos+1)
                 code = tmp[lpos+1:rpos].strip()
                 code = """ """.replace(" ", code).replace("\\\"","\"").replace("\\\\n","\\n").replace("\\\\t","\\t")
-    elif contains_code_snippets(text):# ```code```
-        # print("contains code snippets")
+    elif contains_code_snippets(text):
         logger.debug("text contains ```code snippets```")
         code = get_code_content(text)[0]
     else:
-        # print("unknown pattern")
         logger.warning("unknown pattern")
         code = text
-    # print(code)
     logger.info(f"parsed code:\n{code}")
     return code
         
