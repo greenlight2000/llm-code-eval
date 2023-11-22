@@ -16,11 +16,44 @@ The code translation dataset is located in `data/code_translation_data.jsonl`. T
 
 
 
-## Dependence (Could share with all other generation tasks)
+## Dependence (same as program synthesis and code repair)
 1. `cd code_translation`
 2. install `python>=3.9` (we use `python==3.9`)
 3. install `pytorch` (we use `pytorch==2.1.1`) based on your cuda version
-4. `pip install -r requirement.txt`
+4. ``pip install -r requirement.txt``
+
+### Executor Dependence 
+#### Perl Dependence
+```
+conda install -c conda-forge perl
+```
+Validate the correctness of installation:
+```
+perl -v
+touch myscript.pl
+perl myscript.pl
+```
+
+Programs written in D, and Delphi that need to run on **Windows** require the following dependencies to be installed:
+
+#### D Dependencies:
+
+Download [dmd 2.105.0](https://downloads.dlang.org/releases/2.x/2.105.0/) for windows and unzip it to a suitable location. Replace `d_path` in run.py
+
+#### Delphi Dependencies:
+
+Download [delphi 7](http://altd.embarcadero.com/download/delphi/d7/english/ent/delphi_7_ent_en.iso) and install it to a suitable location. Replace `delphi_path` in run.py
+
+***
+
+Programs written in **other languages** need to be run using the ExecEval project, and the following dependencies need to be installed:
+
+### ExecEval Dependencies:
+
+1. Install [docker-ce](https://docs.docker.com/engine/install/)
+2. Clone this [ExecEval](https://github.com/ntunlp/ExecEval)  repository.
+3. `cd ExecEval`
+4. `docker build . -t exec-eval:1.0`
 
 
 
@@ -90,42 +123,7 @@ python run_{model_name}.py
 ```
 
 
-
-## Executor 
-### Evironment Setup (same as code repair and program synthesis)
-
-Programs written in Perl, D, and Delphi that need to run on **Windows** require the following dependencies to be installed:
-
-#### Perl Dependencies:
-
-Create a conda environment named `myenv`
-```
-conda create -n myenv python=3.8
-conda activate myenv
-conda install -c conda-forge perl
-```
-Validate the correctness of installation
-```
-perl -v
-touch myscript.pl
-perl myscript.pl
-```
-#### D Dependencies:
-
-Download [dmd 2.105.0](https://downloads.dlang.org/releases/2.x/2.105.0/) for windows and unzip it to a suitable location. Replace `d_path` in run.py
-
-#### Delphi Dependencies:
-
-Download [delphi 7](http://altd.embarcadero.com/download/delphi/d7/english/ent/delphi_7_ent_en.iso) and install it to a suitable location. Replace `delphi_path` in run.py
-
-***
-
-Programs written in **other languages** need to be run using the ExecEval project, and the following dependencies need to be installed:
-
-### ExecEval Dependencies:
-
-1. [docker-ce](https://docs.docker.com/engine/install/)
-2. Refer to the guidelines in the **Steps** section of the [ExecEval](https://github.com/ntunlp/ExecEval) project to start the service.
+## Evaluator (executor & scorer)
 
 
 The code ready for testing should be stored line by line in your\_codes.jsonl and the file should be placed in your\_codes\_dir. A typical code record is shown below and should contain at least the following keys:
@@ -141,23 +139,23 @@ The code ready for testing should be stored line by line in your\_codes.jsonl an
 }
 ```
 
-
 * For all programming languages except Perl, D, and Delphi, example of most typical usage:
-    `python run_execeval.py --codes_dir your_codes_dir --results_dir your_results_dir --code_filename your_codes.jsonl`
+
+1. `docker run -it -p x:y -e NUM_WORKERS=n exec-eval:1.0.` This will expose port y (default 5000) as http://localhost:y on the local machine whereas port x is used within the docker container which can be set by environment variable GUNICORN_PORT. It is recommended to not use all cpus, as if cpu goes into 100% load it might affect execution speed of the codes uncontrollably, and keeping some cpus free for evaluation script. A valid example assuming less cpus available: `docker run -it -p 5000:5000 -e NUM_WORKERS=5 exec-eval:1.0`
+2. `python run_execeval.py --codes_dir your_codes_dir --results_dir your_results_dir --code_filename your_codes.jsonl`
 <br>
     The results of the run are output to `your_results_dir`, forming a jsonl file, which compares the input jsonl, with each new entry adding the results of each test case run, stored in the `testcases`
 * For Perl, D, and Delphi, example of most typical usage:
-    `conda activate myenv`
+
     `python run.py  --code_path your_codes_{program_language}.jsonl --output_path result/results.json --cmd_path your_cmd_path `
 <br>
-    Please change the `--code_path` with `perl/d/delphi`. The execute results are saved to `--output_path`, which records the results of `accepted`, `wrong`, and `error` for each key, and each output records the possible error outputs and the type of error.
+    Please change the `--code_path` with `perl/d/delphi` code files. The execute results are saved to `--output_path`, which records the results of `accepted`, `wrong`, and `error` for each key, and each output records the possible error outputs and the type of error.
 
-## Evaluation
 
 After the execution, we provide a *scorer* script to count the number of correct solutions around different languages and difficulties. 
 
-Run following command to count the results generated by `{model_name}`: 
+Please put all your executed results into `--result_dir`, include `d/perl/delphi` and the rest. Then run following command to count the results generated by `{model_name}`: 
 
 `python score_code_translation.py --result_dir your_result_dir --model_name model_name`
 
-It will export two sheets for Easy and Hard problems count by different languages.
+It will export two sheets for Easy and Hard problems counted by different languages.
