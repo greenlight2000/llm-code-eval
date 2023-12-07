@@ -16,7 +16,7 @@ def parse_arguments():
     parser.add_argument('--access_token', default=None, type=str)
     parser.add_argument('--cache_dir', default=None, type=str)
     parser.add_argument('--checkpoint', default='codellama/CodeLlama-7b-Instruct-hf', type=str)
-    parser.add_argument('--data_load_name', default='code_optimization_data.jsonl', type=str, choices=['code_optimization_data.jsonl', 'code_summarization_data.jsonl'])
+    parser.add_argument('--data_load_name', default='code_optimization_data.jsonl', type=str)
     parser.add_argument('--result_save_name', default='code_opt_infer_codellama.jsonl', type=str)
     parser.add_argument('--log_file_name', default='code_opt_infer_codellama.log', type=str)
     parser.add_argument('--temperature', default=0.7, type=float)
@@ -28,12 +28,13 @@ def parse_arguments():
 
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(6))
 def generate_text(prompt, temperature, max_new_tokens, candidate_num):
+    assert temperature > 0 if candidate_num > 1 else True
     inputs = tokenizer(prompt, return_tensors='pt', add_special_tokens=False).to(device)
     outputs = model.generate(
         inputs['input_ids'],
         max_new_tokens=max_new_tokens,
         temperature=temperature,
-        do_sample=True,
+        do_sample=True if temperature > 0 else False,
         top_k=50,
         top_p=0.95,
         num_return_sequences=candidate_num,

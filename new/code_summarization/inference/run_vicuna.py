@@ -19,7 +19,7 @@ def parse_arguments():
     parser.add_argument('--data_load_name', default='code_summarization_data.jsonl', type=str)
     parser.add_argument('--result_save_name', default='code_summ_infer_llama2.jsonl', type=str)
     parser.add_argument('--log_file_name', default='code_summ_infer_llama2.log', type=str)
-    parser.add_argument('--temperature', default=0, type=float)
+    parser.add_argument('--temperature', default=0.0, type=float)
     parser.add_argument('--candidate_num', default=1, type=int)
     args = parser.parse_args()
 
@@ -28,12 +28,13 @@ def parse_arguments():
 
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(6))
 def generate_text(prompt, temperature, max_new_tokens, candidate_num):
+    assert temperature > 0 if candidate_num > 1 else True
     inputs = tokenizer(prompt, return_tensors='pt', add_special_tokens=False).to(device)
     outputs = model.generate(
         inputs['input_ids'],
         max_new_tokens=max_new_tokens,
         temperature=temperature,
-        do_sample=True,
+        do_sample=True if temperature > 0 else False,
         top_k=50,
         top_p=0.95,
         num_return_sequences=candidate_num,
@@ -99,7 +100,7 @@ ASSISTANT:
     return example
 
 def main():
-    load_path = Path(__file__).parent.parent / Path('data') / Path(args.data_load_name)
+    load_path = Path(__file__).parent.parent.parent / Path('data') / Path(args.data_load_name)
     save_dir = Path(__file__).parent / Path('results')
     dataset = load_dataset('json', split='train', data_files=str(load_path))
     dataset.cleanup_cache_files() 

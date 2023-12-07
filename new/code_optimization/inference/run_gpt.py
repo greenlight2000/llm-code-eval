@@ -31,6 +31,7 @@ def parse_arguments():
 # References: https://github.com/openai/openai-cookbook/blob/main/examples/How_to_handle_rate_limits.ipynb
 @backoff.on_exception(backoff.expo, openai.error.RateLimitError)
 def generate_text(model, prompt, temperature, candidate_num):
+    assert temperature > 0 if candidate_num > 1 else True
     messages = [{'role': 'user', 'content': prompt}]
     response = openai.ChatCompletion.create(
         model=model,

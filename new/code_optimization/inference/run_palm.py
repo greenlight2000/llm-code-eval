@@ -24,7 +24,8 @@ def parse_arguments():
 
 @retry.Retry()
 def generate_text(*args, **kwargs):
-    return palm.generate_text(*args, **kwargs)
+    response = palm.generate_text(*args, **kwargs).candidates
+    return [output['output'] for output in response]
 
 
 @retry.Retry()
@@ -70,7 +71,7 @@ Respond only the optimized code in the following JSON format:
             prompt=prompt,
             temperature=temperature,
             max_output_tokens=max_output_tokens,
-            candidate_num=candidate_num
+            candidate_count=candidate_num
         )
     except Exception as e:
         logging.error('Failed to generate text: ' + e.__str__())
@@ -85,7 +86,7 @@ Respond only the optimized code in the following JSON format:
                 logging.error(f"the {i}th response is None, optimization_{i} is set to empty string")
                 optimization = ''
             else:
-                output_tokens = count_message_tokens(responses[i])
+                output_tokens = count_message_tokens(prompt=responses[i])['token_count']
                 logging.info(f'the {i}th response tokens: ' + str(output_tokens))
                 if output_tokens > max_output_tokens:
                     logging.warning(f'Over output tokens limit ---- lang: {lang}, src_uid: {src_uid}')
