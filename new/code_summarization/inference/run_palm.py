@@ -24,7 +24,8 @@ def parse_arguments():
 
 @retry.Retry()
 def generate_text(*args, **kwargs):
-    return palm.generate_text(*args, **kwargs)
+    response = palm.generate_text(*args, **kwargs).candidates
+    return [output['output'] for output in response]
 
 
 @retry.Retry()
@@ -42,7 +43,7 @@ def add_code_summ(example):
 
     logging.info(f'lang: {lang}, id: {id}')
 
-    input_tokens = count_message_tokens(prompt)
+    input_tokens = count_message_tokens(prompt=prompt)['token_count']
     logging.info('input tokens: ' + str(input_tokens))
     if input_tokens > max_input_tokens:
         logging.warning(f'Over input tokens limit ---- lang: {lang}, id: {id}')
@@ -52,12 +53,12 @@ def add_code_summ(example):
             prompt=prompt,
             temperature=temperature,
             max_output_tokens=max_output_tokens,
-            candidate_num=candidate_num
+            candidate_count=candidate_num
         )[0]
         logging.info('response: ' + str(response))
 
         if response is not None:
-            output_tokens = count_message_tokens(response)
+            output_tokens = count_message_tokens(prompt=response)['token_count']
             logging.info('output tokens: ' + str(output_tokens))
             if output_tokens > max_output_tokens:
                 logging.warning(f'Over output tokens limit ---- lang: {lang}, id: {id}')

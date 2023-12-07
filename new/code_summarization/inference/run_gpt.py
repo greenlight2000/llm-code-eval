@@ -31,6 +31,7 @@ def parse_arguments():
 # References: https://github.com/openai/openai-cookbook/blob/main/examples/How_to_handle_rate_limits.ipynb
 @backoff.on_exception(backoff.expo, openai.error.RateLimitError)
 def generate_text(model, prompt, temperature, candidate_num):
+    assert temperature > 0 if candidate_num > 1 else True
     messages = [{'role': 'user', 'content': prompt}]
     response = openai.ChatCompletion.create(
         model=model,
@@ -92,7 +93,7 @@ def add_code_summ(example):
         logging.info('response: ' + str(response))
 
         if response is not None:
-            output_tokens = count_message_tokens(response)
+            output_tokens = count_message_tokens(response, args.model, 'output')
             logging.info('output tokens: ' + str(output_tokens))
             if input_tokens + output_tokens > max_tokens:
                 logging.warning(f'Over output tokens limit ---- lang: {lang}')

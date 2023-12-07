@@ -30,12 +30,13 @@ def parse_arguments():
 
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(6))
 def generate_text(prompt, temperature, max_new_tokens, candidate_num):
+    assert temperature > 0 if candidate_num > 1 else True
     inputs = tokenizer(prompt, return_tensors='pt', add_special_tokens=False).to(device)
     outputs = model.generate(
         inputs['input_ids'],
         max_new_tokens=max_new_tokens,
         temperature=temperature,
-        do_sample=True,
+        do_sample=True if temperature > 0 else False,
         top_k=50,
         top_p=0.95,
         num_return_sequences=candidate_num,
@@ -43,7 +44,7 @@ def generate_text(prompt, temperature, max_new_tokens, candidate_num):
         stopping_criteria=StoppingCriteriaList([# https://github.com/bigcode-project/starcoder/issues/73
             StopAtSpecificTokenCriteria(token_id_list=[
                 tokenizer.encode("<|end|>", return_tensors='pt').tolist()[0][0]
-            ]) # tokenizer.encode("<|end|>", return_tensors='pt') = tensor([[49155]])
+            ])
         ])
     ).to('cpu')
     responses = [tokenizer.decode(output)
@@ -54,11 +55,11 @@ def generate_text(prompt, temperature, max_new_tokens, candidate_num):
 
 class StopAtSpecificTokenCriteria(StoppingCriteria):
     """
-    当生成出第一个指定token时，立即停止生成
+    stop generation when the last token is in the token_id_list
     """
     def __init__(self, token_id_list: List[int] = None):
         """
-        :param token_id_list: 停止生成的指定token的id的列表
+        :param token_id_list: list of token ids to stop at
         """
         self.token_id_list = token_id_list
 
@@ -75,7 +76,7 @@ def count_message_tokens(content):
 
 def add_code_summ(example):
     code = example['source_code']
-    lang = example['lang']
+    lang = example['lang_cluster']
     id = example['id']
 
     user_message = f'Please generate a short summarization for the following codes:\n{code}'
@@ -146,9 +147,6 @@ if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print('Device:', device)
 
-    # References: https://huggingface.co/blog/starcoder
-    # References: https://huggingface.co/datasets/bigcode/ta-prompt
-    # References: https://github.com/bigcode-project/starcoder/issues/101
     tokenizer = AutoTokenizer.from_pretrained(
         args.checkpoint,
         use_fast=True,
@@ -169,8 +167,7 @@ if __name__ == '__main__':
     print(f'Memory footprint: {model.get_memory_footprint() / 1e6:.2f} MB')
     candidate_num = args.candidate_num
     temperature = args.temperature
-    max_input_tokens = tokenizer.model_max_length  # 1000000000000000019884624838656
-    # The maximum numbers of tokens to generate, ignoring the number of tokens in the prompt.
-    max_new_tokens = 5120
+    max_input_tokens = tokenizer.model_max_length
+    max_new_tokens = 2048
 
     main()
