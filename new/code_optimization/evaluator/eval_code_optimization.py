@@ -7,7 +7,7 @@ import numpy as np
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--codes_dir_name', default='palm_opt_parse', type=str, choices=['vicuna_opt_codes', 'wizardcoder_opt_codes', 'codellama_opt_codes', 'gpt4_opt_codes', 'gpt3_opt_codes', 'starcoder_opt_codes', 'llama2_opt_codes', 'palm_opt_codes']) 
+    parser.add_argument('--codes_dir_name', default='palm_opt_codes', type=str, choices=['vicuna_opt_codes', 'wizardcoder_opt_codes', 'codellama_opt_codes', 'gpt4_opt_codes', 'gpt3_opt_codes', 'starcoder_opt_codes', 'llama2_opt_codes', 'palm_opt_codes']) 
     args = parser.parse_args()
     return args
 
@@ -38,8 +38,6 @@ def main():
                     if "[" in unopt['mean_peak_mem']:
                         s = re.sub(r'\s+', ' ', unopt['mean_peak_mem'])
                         perf_li = s.replace("]","").replace("[","").strip().split(' ')
-                        s = "0.00e+00"
-                        num = float(s)
                         perf_li = [float(x) for x in perf_li]
                     else:
                         perf_li = [float(x) for x in unopt['mean_peak_mem'].split(',')]

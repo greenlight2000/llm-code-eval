@@ -205,15 +205,15 @@ def cal_passrate_perfmetrcs(example):
 
 
 def main():
-    dataset = load_dataset('json', split='train', data_files=str(load_path)).select(range(10))
+    dataset = load_dataset('json', split='train', data_files=str(load_path))
     dataset = dataset.map(cal_passrate_perfmetrcs)
 
 
 
 if __name__ == '__main__':
     args = parse_arguments()
-    load_path = Path(__file__).parent.parent.parent / Path('results') / Path('raw') / Path(args.llm_infer_result)
-    code_dir = Path(__file__).parent.parent.parent / Path('results') / Path('ans') / Path(args.codes_dir_name)
+    load_path = Path(__file__).parent.parent / Path('inference/results') / Path(args.llm_infer_result)
+    code_dir = Path(__file__).parent / Path('codes') / Path(args.codes_dir_name)
     retest = args.retest
     timeout_code_uids = []
     main()
