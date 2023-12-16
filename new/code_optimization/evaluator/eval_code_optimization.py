@@ -35,19 +35,9 @@ def main():
 
                 unopt = df.loc['unopt']
                 if opt_type == 'mem':
-                    if "[" in unopt['mean_peak_mem']:
-                        s = re.sub(r'\s+', ' ', unopt['mean_peak_mem'])
-                        perf_li = s.replace("]","").replace("[","").strip().split(' ')
-                        perf_li = [float(x) for x in perf_li]
-                    else:
-                        perf_li = [float(x) for x in unopt['mean_peak_mem'].split(',')]
+                    perf_li = [float(x) for x in unopt['mean_peak_mem'].split(',')]
                 elif opt_type == 'time':
-                    if "[" in unopt['mean_cpu_time']:
-                        s = re.sub(r'\s+', ' ', unopt['mean_cpu_time'])
-                        perf_li = s.replace("]","").replace("[","").strip().split(' ')
-                        perf_li = [float(x) for x in perf_li]
-                    else:
-                        perf_li = [float(x) for x in unopt['mean_cpu_time'].split(',')]
+                    perf_li = [float(x) for x in unopt['mean_cpu_time'].split(',')]
                 unopt_low_bound = min(perf_li)
                 unopt_perf = sum(perf_li)/len(perf_li)
                 unopt_perf_dev = np.std(perf_li)
